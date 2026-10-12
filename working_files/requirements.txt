@@ -1,0 +1,49 @@
+# ============================================================================
+# LGI (Looking Glass Interface) — dependency manifest
+# Target host: Alienware X17, Windows 11, NVIDIA GPU (CUDA)
+# Run natively on the X17 (NOT in a container) — needs mic, webcam, screen
+# capture, GPU, and Qt GUI access.
+#
+# Windows-specific prerequisites (install BEFORE `pip install -r requirements.txt`):
+#
+#   1) eSpeak NG  (required by Kokoro's phonemizer):
+#      https://github.com/espeak-ng/espeak-ng/releases
+#      Install to the default location:  C:\Program Files\eSpeak NG\
+#
+#   2) torch with CUDA  (required by Kokoro + faster-whisper GPU paths):
+#      pip install torch --index-url https://download.pytorch.org/whl/cu121
+#
+#   3) PyAudio  (if the pip wheel fails to build, use pipwin):
+#      pip install pipwin
+#      pipwin install pyaudio
+#
+# ============================================================================
+
+PyQt6>=6.6.0
+faster-whisper>=1.0.0   # >=1.0 bundles Silero VAD (vad_filter=True) via onnxruntime
+PyAudio>=0.2.13
+numpy>=1.24.0
+sounddevice>=0.4.6
+kokoro>=0.7.9
+mss>=9.0.0
+opencv-python==4.10.0.84           # exact-pin: numpy-1 ABI + camera-proven here (4.11+/5.x need numpy>=2 — breaks mediapipe 0.10.21), Oct 3 2026
+opencv-contrib-python==4.10.0.84   # pairs with opencv-python above; keep 4.x for the numpy-1 ABI (live venv312 has both)
+dxcam>=0.0.5          # Windows Desktop Duplication API capture (screen "dashcam")
+pytesseract>=0.3.10   # local OCR for desktop-vision context — ALSO install the
+                      # Tesseract OCR engine itself (UB-Mannheim build, add to PATH):
+                      # https://github.com/UB-Mannheim/tesseract/wiki
+pygetwindow>=0.0.9
+pyperclip>=1.8.2
+keyboard>=0.13.5
+requests>=2.31.0
+
+# Webcam perception stack (v1.2) — local person tracking, gesture control,
+# attention gating, and spatial reporting into the polaris-gateway radar room.
+mediapipe==0.10.21                 # ONLY the legacy mp.solutions builds work — 0.10.30+/1.0.x stripped it (Oct 3 2026 gesture outage); needs numpy<2
+ultralytics>=8.2.0                # YOLOv8n + ByteTrack persistent person tracking (reuses torch)
+python-socketio[client]>=5.7.0     # socketio client emitting radar_motion/vision_frame to :8083
+
+# Webcam-analyze VLM turns (local_vlm.py) ride the Mainframe's Ollama
+# (polaris-ai:latest) over plain HTTP — `requests` above covers it; no
+# transformers/bitsandbytes needed. To move the VLM fully local later:
+# `ollama pull llava` on the X17 and set LGI_VLM_URL=http://localhost:11434.
