@@ -1,6 +1,6 @@
 # LGI — Looking Glass Interface
 ## Executive Supervisor Client — Architectural Blueprint
-
+ 
 ## **The North Star team — one intelligence, three stations.** Polaris is one intelligence embodied where she is needed: the Mainframe gateway is her brain and hands (`polaris-ai` persona, dispatcher, memory — strictly text-only), this X17 station running LGI is her senses and voice (webcam + desktop vision IN; Kokoro TTS + Faster-Whisper STT OUT), and FreeRoam on the phone is her field presence (on-device STT/TTS over WireGuard). The operator is the final authority; only the operator and **Cline** ever edit the workspace repo — LGI sees, hears, and speaks, but never writes. Charter: the top team section of `northstar.md`; the gateway contract LGI must live up to is §7.
 
 | | |
